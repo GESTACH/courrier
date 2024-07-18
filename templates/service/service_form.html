@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %} {% endblock title %}
+
+{% block content %}
+
+
+    {% if messages %}
+        <div class="alert alert-warning" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    {% endif %}
+
+    <!-- TITRE DE LA PAGE -->
+<div class="card rounded mt-1 mr-2" style="background-color: rgba(58,68,122,0.23)">
+    <div class="card-header">
+        <div class="col-sm">
+            <h4><b>GESTION DES SERVICES</b></h4>
+        </div>
+    </div>
+</div>
+
+<!-- FORMULAIRE -->
+
+
+
+  <div class="card card">
+            <a href="{% url 'service:service_list'%}" >
+                 <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+      <div class="card-header">
+            <div class="form-group label-floating has-success row">
+            
+                <h4><b>{% if form.instance.pk %}Modifier l'{% else %}Créer un {% endif %}service</b></h4>
+            </div>
+        </div>
+
+      <div class="card-body center">
+          <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+              <div class="form-group col-md-10 center">
+                  {{ form.direction_service }}
+              </div>
+            <div class="form-group col-md-10 center">
+                  {{ form.nom_service }}
+              </div>
+              <div class="form-group col-md-10 center">
+                  {{ form.tutelle_service }}
+              </div>
+             
+              <div class="card-footer">
+                 <button type="submit" class="btn btn-primary btn-sm ml-auto mr-1">Enregistrer</button>
+              </div>
+
+          </form>
+      </div>
+
+  </div>
+    
+ 
+
+{% endblock content %}

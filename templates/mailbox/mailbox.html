@@ -1,0 +1,376 @@
+{% extends 'base.html' %}
+
+
+{% block title %} {% endblock title %}
+
+{% block content %}
+
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/mail/plugins/fontawesome-free/css/all.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="/static/mail/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/mail/css/adminlte.min.css">
+<style>
+.modal.right .modal-dialog {
+    position: fixed;
+    right: 0;
+    margin: 0;
+    height: 100%;
+    width: 75%;
+    -webkit-transform: translate3d(0%, 0, 0);
+    -ms-transform: translate3d(0%, 0, 0);
+    -o-transform: translate3d(0%, 0, 0);
+    transform: translate3d(0%, 0, 0);
+}
+
+.modal.right .modal-content {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.modal.right .modal-body {
+    padding: 15px 15px 80px;
+}
+
+.modal.right.fade .modal-dialog {
+    right: -50px;
+    -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+    -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+    -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+    transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.show .modal-dialog {
+    right: 0;
+}
+
+</style>
+    
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="">
+                <h4>Gestion des courriers individuels</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Boîte de réception</h1>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+<div class="row">
+        <div class="col-md-3">
+          <a class="btn btn-primary btn-block mb-3" data-toggle="modal" data-target="#createCourrierModal">Nouveau</a>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Menu</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <ul class="nav nav-pills flex-column">
+                <li class="nav-item active">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-inbox"></i> Reçus
+                    <span class="badge bg-primary float-right">12</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-envelope"></i> Envoyés
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-trash-alt"></i> Corbeille
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <!-- /.card-body -->
+          </div>
+
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+          <div class="card card-primary card-outline">
+            <div class="card-header">
+              <h3 class="card-title">Réception</h3>
+
+              <div class="card-tools">
+                <div class="input-group input-group-sm">
+                  <input type="text" class="form-control" placeholder="Search Mail">
+                  <div class="input-group-append">
+                    <div class="btn btn-primary">
+                      <i class="fas fa-search"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+              <div class="mailbox-controls">
+                <!-- Check all button -->
+                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
+                </button>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn-sm">
+
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                  <button type="button" class="btn btn-default btn-sm">
+                    <i class="fas fa-reply"></i>
+                  </button>
+                  <button type="button" class="btn btn-default btn-sm">
+                    <i class="fas fa-share"></i>
+                  </button>
+                </div>
+                <!-- /.btn-group -->
+                <button type="button" class="btn btn-default btn-sm">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+                <div class="float-right">
+                  1-50/200
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm">
+                      <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                  <!-- /.btn-group -->
+                </div>
+                <!-- /.float-right -->
+              </div>
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <tbody>
+                  {% for courrier in courriers_entrants %}
+                  <tr>
+                    <td>
+                      <div class="icheck-primary">
+                        <input type="checkbox" value="{{ courrier.id }}" id="check1">
+                        <label for="check1"></label>
+                      </div>
+                    </td>
+                    <td class="mailbox-star"><a href="#"><i class="fas fa-star text-warning"></i></a></td>
+                    <td class="mailbox-name"><a href="{% url 'courrier:courrier_sortant_detail' courrier.pk %}">{{ courrier.expediteur }}</a></td>
+                    <td class="mailbox-subject"><b>{{ courrier.sujet }}</b>
+                    </td>
+                    <td class="mailbox-attachment">
+                        {% if courrier.joint %}
+                           <button class="btn btn-link" data-toggle="modal" data-target="#viewAttachmentModal" data-url="{{ courrier.joint.url }}">Voir</button>
+                        {% endif %}
+                    </td>
+                    <td class="mailbox-date">{{ courrier.date_envoi|date:"d/m/Y H:i" }}</td>
+                  </tr>
+                  {% endfor %}
+
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+              <!-- /.mail-box-messages -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer p-0">
+              <div class="mailbox-controls">
+                <!-- Check all button -->
+                <button type="button" class="btn btn-default btn-sm checkbox-toggle">
+                  <i class="far fa-square"></i>
+                </button>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn-sm">
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                  {% if courriers_entrants.has_previous %}
+                      <button type="button" class="btn btn-default btn-sm">
+                        <i class="fas fa-reply"></i>
+                      </button>
+                  {% endif %}
+
+                  {% if courriers_entrants.has_next %}
+                      <button type="button" class="btn btn-default btn-sm">
+                        <i class="fas fa-share"></i>
+                      </button>
+                  {% endif %}
+
+                </div>
+                <!-- /.btn-group -->
+                <button type="button" class="btn btn-default btn-sm">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+                <div class="float-right">
+                  {{ courriers_entrants.number }}/{{ courriers_entrants.paginator.num_pages }}
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm">
+                      <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                  <!-- /.btn-group -->
+                </div>
+                <!-- /.float-right -->
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+
+   <!-- Modal pour créer un nouveau courrier sortant -->
+<div class="modal fade right" id="createCourrierModal" tabindex="-1" role="dialog" aria-labelledby="createCourrierModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createCourrierModalLabel">Nouveau message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input class="form-control" placeholder="To:" />
+                </div>
+                <div class="form-group">
+                    <input class="form-control" placeholder="Subject:" />
+                </div>
+                <div class="form-group">
+                    <textarea id="compose-textarea" class="form-control" style="height: 300px"></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="btn btn-default btn-file">
+                        <i class="fas fa-paperclip"></i> Joindre fichier
+                        <input type="file" name="attachment" />
+                    </div>
+                    <p class="help-block">Max. 32MB</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="float-right">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="far fa-envelope"></i> Envoyer
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <!-- Modal pour voir les fichiers joints -->
+<div class="modal fade" id="viewAttachmentModal" tabindex="-1" role="dialog" aria-labelledby="viewAttachmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewAttachmentModalLabel">Fichier joint</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe id="attachmentIframe" src="" frameborder="0" style="width: 100%; height: 400px;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- jQuery -->
+<script src="/static/mail/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/mail/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/mail/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="/static/mail/js/demo.js"></script>
+<!-- Page specific script -->
+<script>
+  $(function () {
+    //Enable check and uncheck all functionality
+    $('.checkbox-toggle').click(function () {
+      var clicks = $(this).data('clicks')
+      if (clicks) {
+        //Uncheck all checkboxes
+        $('.mailbox-messages input[type=\'checkbox\']').prop('checked', false)
+        $('.checkbox-toggle .far.fa-check-square').removeClass('fa-check-square').addClass('fa-square')
+      } else {
+        //Check all checkboxes
+        $('.mailbox-messages input[type=\'checkbox\']').prop('checked', true)
+        $('.checkbox-toggle .far.fa-square').removeClass('fa-square').addClass('fa-check-square')
+      }
+      $(this).data('clicks', !clicks)
+    })
+
+    //Handle starring for font awesome
+    $('.mailbox-star').click(function (e) {
+      e.preventDefault()
+      //detect type
+      var $this = $(this).find('a > i')
+      var fa    = $this.hasClass('fa')
+
+      //Switch states
+      if (fa) {
+        $this.toggleClass('fa-star')
+        $this.toggleClass('fa-star-o')
+      }
+    })
+  })
+</script>
+
+
+<script>
+$(document).ready(function() {
+    $('#createCourrierForm').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'courriers:courrier_sortant_create' %}",
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                location.reload();
+            },
+            error: function(error) {
+                alert('Une erreur s\'est produite lors de l\'envoi du courrier.');
+            }
+        });
+    });
+
+    $('#viewAttachmentModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var url = button.data('url');
+        var modal = $(this);
+        modal.find('#attachmentIframe').attr('src', url);
+    });
+});
+</script>
+
+{% endblock content %}

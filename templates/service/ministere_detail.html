@@ -1,0 +1,17 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Liste des utilisateurs {% endblock title %}
+
+{% block content %}
+<h1>Détails du ministère "{{ ministere.ministere }}"</h1>
+    <p><strong>Nom :</strong> {{ ministere.ministere }}</p>
+    <!-- Afficher la photo du ministère -->
+    {% if ministere.logo_min %}
+        <img src="{{ ministere.logo_min.url }}" alt="{{ ministere.ministere }} Logo">
+    {% else %}
+        <p>Aucune photo disponible pour ce ministère.</p>
+    {% endif %}
+    <!-- Afficher d'autres détails du ministère si nécessaire -->
+    <a href="{% url 'service:ministere_list' %}">Retour à la liste des ministères</a>
+
+
+{% endblock content %}

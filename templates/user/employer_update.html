@@ -1,0 +1,37 @@
+
+{% extends 'base.html' %}
+{% block title %} Liste des Employer {% endblock title %}
+
+{% block content %}
+
+<h1>Créer un Employé</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="nom_prenoms">Nom et Prénoms:</label>
+            <select name="nom_prenoms" id="nom_prenoms">
+                {% for utilisateur in utilisateurs %}
+                <option value="{{ utilisateur.pk }}">{{ utilisateur.nom_prenoms }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="service">Service:</label>
+            <select name="service" id="service">
+                {% for service in services %}
+                <option value="{{ service.pk }}">{{ service.nom_service }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="fonction">Fonction:</label>
+            <select name="fonction" id="fonction">
+                {% for fonction in fonctions %}
+                <option value="{{ fonction.pk }}">{{ fonction.fonction_employer }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Créer Employé</button>
+    </form>
+{% endblock content %}
+

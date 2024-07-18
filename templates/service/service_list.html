@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Affichage des messages -->
+    {% if messages %}
+        <div class="alert alert-success" role="alert">
+             {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <!-- TITRE DE LA PAGE -->
+    <div class="card rounded mt-1 mr-2" style="background-color: rgba(58,68,122,0.23)">
+        <div class="card-header">
+            <div class="col-sm">
+                <h4><b>GESTION DES SERVICES</b></h4>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- COMMANDES DU TABLEAU -->
+    <div class="row">
+        <form method="get" class="col-xl-11" action="{% url 'service:service_list' %}">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <input type="text" name="search" value="{{ search_query }}" class="form-control border border-primary" placeholder="Rechercher un service" id="search-input" aria-label="Recipient's username">
+                    <button type="submit"  class="btn btn-dark waves-effect waves-light mdi mdi-search-web" type="button"></button>
+                </div>
+            </div>
+        </form>
+        <div class="col-sm float-end">
+            <a href="{% url 'service:service_create' %}" class="btn btn-primary">
+              <i class="mdi mdi-plus-thick"></i> Ajouter
+            </a>
+        </div>
+    </div>
+
+
+
+    <!-- LISTE DES SERVICES -->
+    <div class="card mt-3 border-primary">
+        <div class="card-head bg-soft-dark">
+            <h3>Liste des Services</h3>
+        </div>
+        <div class="card-body p-0 ml-2 mr-1">
+           <table class="table  table-hove ">
+               <thead class="small">
+                   <tr class="small">
+                       <th>Nom</th>
+                       <th> Tutelle</th>
+                       <th class="float-end">Actions</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   {% for service in services %}
+                   <tr>
+                      <td>
+                         {{ service.nom_service }}
+                      </td>
+                      <td>
+                          {{ service.tutelle_service }}
+                      </td>
+                      <td>
+                          <div class="dropdown float-end">
+                              <button class="btn btn-soft-primary waves-effect waves-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i class="mdi mdi-chevron-down"></i>
+                              </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{% url 'service:service_update' service.pk %}">
+                                            <i class="mdi mdi-update me-2"></i>Modifier
+                                        </a>
+                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ service.pk }}">
+                                            <i class="mdi mdi-delete me-2"></i>Supprimer
+                                        </a>
+                                    </div>
+                          </div>
+                      </td>
+                   
+
+                        <!-- Modal de confirmation de suppression -->
+                        <div class="modal fade" id="confirmDeleteModal{{ service.pk }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmer la suppression</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Êtes-vous sûr de vouloir supprimer le service "{{ service.name }}" ?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                        <form method="post" action="{% url 'service:service_delete' service.pk %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                      <tr>
+                         <td colspan="2">Aucun service trouvé.</td>
+                      </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+    </div>
+
+
+            <!-- Pagination -->
+            <nav aria-label="...">
+                <ul class="pagination">
+                    {% if services.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" tabindex="-1">Première</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ services.previous_page_number }}">Précédente</a>
+                        </li>
+                    {% endif %}
+                    {% for num in services.paginator.page_range %}
+                        {% if services.number == num %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ num }} <span class="sr-only">(current)</span></span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if services.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ services.next_page_number }}">Suivante</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ services.paginator.num_pages }}">Dernière</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+
+    <style>
+    .table-hover tbody tr:hover td a {
+        text-decoration: underline;
+    }
+    </style>
+
+{% endblock %}

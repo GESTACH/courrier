@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% block title %}Liste des utilisateurs{% endblock title %}
+
+{% block content %}
+    
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Affichage des messages -->
+    {% if messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <!-- TITRE DE LA PAGE -->
+    <div class="card rounded mt-1 mb-3" style="background-color: rgba(58,68,122,0.23)">
+        <div class="card-header">
+            <h4 class="mb-0"><b>GESTION DES UTILISATEURS</b></h4>
+        </div>
+    </div>
+
+    <!-- COMMANDES DU TABLEAU -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Rechercher un utilisateur" id="search-input" />
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{% url 'user:utilisateur_create' %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nouvelUtilisateurModal">
+                <i class="fas fa-user-plus me-2"></i>Nouvel utilisateur
+            </a>
+        </div>
+    </div>
+    
+    <!-- Modal pour la création d'un nouvel utilisateur -->
+    <div class="modal fade" id="nouvelUtilisateurModal" tabindex="-1" aria-labelledby="nouvelUtilisateurModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'user:utilisateur_create' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="nouvelUtilisateurModalLabel">Création d'un nouvel utilisateur</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="id_first_name">Prénom :</label>
+                            <input type="text" id="id_first_name" name="first_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_last_name">Nom :</label>
+                            <input type="text" id="id_last_name" name="last_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_email">Email :</label>
+                            <input type="email" id="id_email" name="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password">Mot de passe :</label>
+                            <input type="password" id="id_password" name="password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Créer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLEAU -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Utilisateurs</th>
+                        <th>Email</th>
+                        <th class="text-center">Admin</th>
+                        <th class="text-center">Statut</th>
+                        <th class="text-center">Affectation</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.last_name }} {{ utilisateur.first_name }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td class="text-center">
+                            <div class="form-check form-switch">
+                                                       
+                                    {% if utilisateur.is_staff %}
+                                        <span class="badge bg-success">Oui</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Non</span>
+                                    {% endif %}
+                                </label>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="form-check form-switch">
+                                                       
+                                    {% if utilisateur.is_active %}
+                                        <span class="badge bg-success">Actif</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inactif</span>
+                                    {% endif %}
+                                </label>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="form-check form-switch">
+                                                       
+                                    {% if utilisateur.employer.fonction_employer %}
+                                        {{ utilisateur.employer.fonction_employer }}
+                                    {% else %}
+                                        <span class="badge bg-danger">Non affecté</span>
+                                    {% endif %}
+                                </label>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_{{ utilisateur.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Actions
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton_{{ utilisateur.pk }}">
+                                    {% if utilisateur.employer %}
+                                        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#existenceAffectionModal{{ utilisateur.pk }}">Affecter l'utilisateur</button></li>
+                                    {% else %}
+                                        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#affecterUtilisateurModal{{ utilisateur.pk }}">Affecter l'utilisateur</button></li>
+                                    {% endif %}
+                                    <li><a class="dropdown-item" href="{% url 'permission:manage_user_permissions' user_id=user.id %}">Gérer les permissions</a></li>
+                                    <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#modifierUtilisateurModal{{ utilisateur.pk }}">Modifier l'utilisateur</button></li>
+                                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ utilisateur.pk }}">Supprimer l'utilisateur</a></li>
+                                </ul>
+                            </div>
+                             
+                            <!-- Modal de confirmation d'existence d'affectation -->
+                            <div class="modal fade" id="existenceAffectionModal{{ utilisateur.pk }}" tabindex="-1" aria-labelledby="existenceAffectionModalLabel{{ utilisateur.pk }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="existenceAffectionModalLabel{{ utilisateur.pk }}">Confirmation d'existence d'affectation</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ utilisateur.first_name }} {{ utilisateur.last_name }} est déjà affecté(e) à {{ utilisateur.employer.service }} avec la fonction {{ utilisateur.employer.fonction_employer }}.</p>
+                                            <p>Voulez-vous modifier cette affectation ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#affectionUpdateModal{{ utilisateur.pk }}" data-bs-dismiss="modal">Modifier l'affectation</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal pour affecter l'utilisateur -->
+                            <div class="modal fade" id="affecterUtilisateurModal{{ utilisateur.pk }}" tabindex="-1" aria-labelledby="affecterUtilisateurModalLabel{{ utilisateur.pk }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <form method="POST" action="{% url 'user:utilisateur_affectation' utilisateur.id %}">
+                                            {% csrf_token %}
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="affecterUtilisateurModalLabel{{ utilisateur.pk }}">Affecter l'utilisateur à un service</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Affecter {{ utilisateur.first_name }} {{ utilisateur.last_name }} à :</p>
+                                                <div class="mb-3">
+                                                    <label for="id_service">Service :</label>
+                                                    {{ form.service }}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="id_fonction_employer">Fonction de l'employé :</label>
+                                                    {{ form.fonction_employer }}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Affecter</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal pour la modification de l'affectation -->
+                            <div class="modal fade" id="affectionUpdateModal{{ utilisateur.pk }}" tabindex="-1" aria-labelledby="affectionUpdateModalLabel{{ utilisateur.pk }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <form method="POST" action="{% url 'user:utilisateur_affectation' utilisateur.pk %}">
+                                            {% csrf_token %}
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="affectionUpdateModalLabel{{ utilisateur.pk }}">Modifier l'affectation de {{ utilisateur.first_name }} {{ utilisateur.last_name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Modifier l'affectation de {{ utilisateur.first_name }} {{ utilisateur.last_name }} :</p>
+                                                <div class="mb-3">
+                                                    <label for="id_service">Service :</label>
+                                                    {{ form.service }}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="id_fonction_employer">Fonction de l'employé :</label>
+                                                    {{ form.fonction_employer }}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Modifier l'affectation</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal pour la modification de l'affectation -->
+                            <div class="modal fade" id="affectionUpdateModal{{ utilisateur.pk }}" tabindex="-1" aria-labelledby="affectionUpdateModalLabel{{ utilisateur.pk }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <form method="POST" action="{% url 'user:utilisateur_affectation' utilisateur.pk %}">
+                                            {% csrf_token %}
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="affectionUpdateModalLabel{{ utilisateur.pk }}">Modifier l'affectation de {{ utilisateur.first_name }} {{ utilisateur.last_name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Modifier l'affectation de {{ utilisateur.first_name }} {{ utilisateur.last_name }} :</p>
+                                                <div class="mb-3">
+                                                    <label for="id_service">Service :</label>
+                                                    {{ form.service }}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="id_fonction_employer">Fonction de l'employé :</label>
+                                                    {{ form.fonction_employer }}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Modifier l'affectation</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal de confirmation de suppression -->
+                            <div class="modal fade" id="confirmDeleteModal{{ utilisateur.pk }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ utilisateur.pk }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmDeleteModalLabel{{ utilisateur.pk }}">Confirmation de suppression</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                            <a href="{% url 'user:utilisateur_delete' utilisateur.pk %}" class="btn btn-danger">Confirmer</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <!-- Modal pour modifier l'utilisateur -->
+                            <div class="modal fade" id="modifierUtilisateurModal{{ utilisateur.pk }}" tabindex="-1" aria-labelledby="modifierUtilisateurModalLabel{{ utilisateur.pk }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <form method="POST" action="{% url 'user:utilisateur_update' utilisateur.pk %}">
+                                            {% csrf_token %}
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modifierUtilisateurModalLabel{{ utilisateur.pk }}">Modifier l'utilisateur</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="id_first_name">Prénom :</label>
+                                                    <input type="text" id="id_first_name" name="first_name" class="form-control" value="{{ utilisateur.first_name }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="id_last_name">Nom :</label>
+                                                    <input type="text" id="id_last_name" name="last_name" class="form-control" value="{{ utilisateur.last_name }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="id_email">Email :</label>
+                                                    <input type="email" id="id_email" name="email" class="form-control" value="{{ utilisateur.email }}" required>
+                                                </div>
+                                                <div class="mb-3 form-check">
+                                                    <input type="checkbox" id="id_is_active" name="is_active" class="form-check-input" {% if utilisateur.is_active %}checked{% endif %}>
+                                                    <label class="form-check-label" for="id_is_active">Activé</label>
+                                                </div>
+                                                <div class="mb-3 form-check">
+                                                    <input type="checkbox" id="id_is_staff" name="is_staff" class="form-check-input" {% if utilisateur.is_staff %}checked{% endif %}>
+                                                    <label class="form-check-label" for="id_is_staff">Administrateur</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+$(document).ready(function() {
+    var searchInput = $('#search-input');
+    var table = $('table');
+    var tbody = table.find('tbody');
+
+    searchInput.on('input', function() {
+        var query = $(this).val();
+        $.ajax({
+            url: "{% url 'user:search_users' %}",
+            data: {
+                'query': query
+            },
+            success: function(data) {
+                tbody.empty();
+                if (data.length === 0) {
+                    tbody.append('<tr><td colspan="4" class="text-center">Aucun résultat trouvé</td></tr>');
+                } else {
+                    $.each(data, function(index, user) {
+                        var row = '<tr>' +
+                            '<td>' + user.last_name + ' ' + user.first_name + '</td>' +
+                            '<td>' + user.email + '</td>' +
+                            '<td class="text-center">' +
+                            '<div class="form-check form-switch">' +
+                            '<input class="form-check-input" type="checkbox" id="active_checkbox_' + user.id + '" ' + (user.is_active ? 'checked' : '') + '>' +
+                            '<label class="form-check-label" for="active_checkbox_' + user.id + '">' +
+                            (user.is_active ? '<span class="badge bg-success">Actif</span>' : '<span class="badge bg-danger">Inactif</span>') +
+                            '</label>' +
+                            '</div>' +
+                            '</td>' +
+                            '<td class="text-end">' +
+                            '<!-- Votre code HTML pour les boutons d\'actions -->' +
+                            '</td>' +
+                            '</tr>';
+                        tbody.append(row);
+                    });
+                }
+            }
+        });
+    });
+});
+</script>    
+{% endblock javascripts %}

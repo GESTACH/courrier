@@ -1,0 +1,88 @@
+{% extends 'layouts/base.html' %}
+{% block title %} {% endblock title %}
+
+{% block content %}
+
+
+    {% if messages %}
+        <div class="alert alert-success" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    {% endif %}
+
+    <!-- TITRE DE LA PAGE -->
+<div class="card rounded mt-1 mr-2" style="background-color: rgba(58,68,122,0.23)">
+    <div class="card-header">
+        <div class="col-sm">
+            <h4><b>GESTION DES SERVICES</b></h4>
+
+        </div>
+    </div>
+</div>
+
+<!-- COMMANDES DU TABLEAU -->
+
+
+
+  <div class="card card">
+        <div class="row ml-3">
+            <a href="{% url 'service:service_list'%}" >
+                 <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <h4>{{ service.nom_service }}</h4>
+
+        </div>
+
+
+      <div class="card-header">
+            <div class="form-group label-floating has-success row">
+
+                <h4><b>{% if form.instance.pk %}Modifier l'{% else %}Affecter {% endif %}un employer</b></h4>
+            </div>
+      </div>
+
+  
+      <div class="card-body center">
+          <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+
+                  <div class="form-group col-md-10 center">
+                      <p>Sélectionner une fonction</p>
+
+                      <div class="row ">
+                          <div class="col-10">
+                          {{ form.fonction_employer }}
+                          </div>
+                          <a data-toggle="tooltip" data-placement="top" title="Ajouter une fonction"  href="{% url 'service:fonction_employer_create' service.pk %}"  class="text-center" >
+                          <span class="material-symbols-outlined">add</span>
+                          </a>
+                      </div>
+                  </div>
+                    <div class="form-group col-md-10 ">
+                      {{ form.service }}
+                  </div>
+                  <p>Sélectionner l'employer à affecter</p>
+                  <div class="row">
+                      <div class="form-group col-md-10 col-10">
+                      {{ form.user }}
+                      </div>
+
+                  </div>
+
+              <div class="card-footer">
+                 <button type="submit" class="btn btn-primary  ml-auto mr-1 float-right">Enregistrer l'affectation</button>
+              </div>
+
+          </form>
+      </div>
+
+  </div>
+
+
+
+{% endblock content %}

@@ -1,0 +1,63 @@
+
+{% include  'partials/main.html' %}
+
+<head>
+   
+{% include  'partials/title-meta.html'%}
+    <link href="/static/assets/libs/morris.js/morris.css" rel="stylesheet" type="text/css" />
+   <link rel="shortcut icon" href="/static/assets/images/favicon.ico">
+
+<!-- Plugins css -->
+<link href="/static/assets/libs/quill/quill.core.css" rel="stylesheet" type="text/css" />
+<link href="/static/assets/libs/quill/quill.bubble.css" rel="stylesheet" type="text/css" />
+<link href="/static/assets/libs/quill/quill.snow.css" rel="stylesheet" type="text/css" />
+
+<!-- App css -->
+<link href="/static/assets/css/style.min.css" rel="stylesheet" type="text/css">
+<link href="/static/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+<script src="/static/assets/js/config.js"></script>
+    
+    {% include  'partials/head-css.html' %}
+</head>
+
+<body>
+    <!-- Begin page -->
+    <div class="layout-wrapper">
+        {% include  'partials/menu.html' %}
+       <div class="page-content">
+            {% include  'partials/topbar.html' %}
+       
+            <div class="mx-3">
+            
+                {% block content %}{% endblock content %}
+                
+            </div>
+            {% include 'partials/footer.html' %}
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+
+    </div>
+    <!-- END wrapper -->
+
+
+    {% include 'partials/footer-scripts.html' %}
+
+    <!-- Knob charts js -->
+    <script src="/static/assets/libs/jquery-knob/jquery.knob.min.js"></script>
+
+    <!-- Sparkline Js-->
+    <script src="/static/assets/libs/jquery-sparkline/jquery.sparkline.min.js"></script>
+
+    <script src="/static/assets/libs/morris.js/morris.min.js"></script>
+
+    <script src="/static/assets/libs/raphael/raphael.min.js"></script>
+
+    <!-- Dashboard init-->
+    <script src="/static/assets/js/pages/dashboard.js"></script>
+
+</body>
+
+</html>

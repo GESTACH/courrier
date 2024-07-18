@@ -1,0 +1,35 @@
+ 
+
+
+<h1>Permissions de l'objet "{{ object }}"</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <h2>Attribuer des permissions à l'utilisateur "{{ request.user }}" :</h2>
+        <ul>
+            {% for perm in all_perms %}
+                <li>
+                    <input type="checkbox" name="perms" value="{{ perm }}" {% if perm in user_perms %}checked{% endif %}>
+                    {{ perm }}
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Attribuer les permissions sélectionnées à l'utilisateur</button>
+    </form>
+
+    <h2>Attribuer des permissions aux groupes de l'utilisateur :</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for group in request.user.groups.all %}
+            <h3>{{ group }}</h3>
+            <ul>
+                {% for perm in all_perms %}
+                    <li>
+                        <input type="checkbox" name="group_perms_{{ group.id }}" value="{{ perm }}" {% if perm in group_perms %}checked{% endif %}>
+                        {{ perm }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+        <button type="submit">Attribuer les permissions sélectionnées aux groupes</button>
+    </form>

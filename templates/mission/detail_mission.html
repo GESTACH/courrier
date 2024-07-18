@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card">
+    <div class="card-header">
+        <div class="">
+            <h4>Détails de la mission</h4>
+        </div>
+    </div>
+</div>
+
+    <div class="card">
+        <p><strong>Référence :</strong> {{ mission.reference }}</p>
+        <p><strong>Date de début :</strong> {{ mission.date_mission }}</p>
+        <p><strong>Date de fin :</strong> {{ mission.date_fin_mission }}</p>
+        <p><strong>Objet :</strong> {{ mission.objet_mission }}</p>
+        <p><strong>Transport :</strong> {{ mission.transport }}</p>
+        <p><strong>Hébergement :</strong> {{ mission.hebergement }}</p>
+        <p><strong>Repas fournis :</strong> {{ mission.repas_fourni }}</p>
+    
+        <h2>Missionnaires :</h2>
+        <ul>
+            {% for missionnaire in mission.missions.all %}
+                <li>{{ missionnaire.missionnaire.nom }} {{ missionnaire.missionnaire.prenom }}</li>
+            {% endfor %}
+        </ul>
+        
+        <button onclick="window.print()">Imprimer</button>
+    </div>
+    
+{% endblock %}
+

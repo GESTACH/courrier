@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Mission Details</h1>
+<p><strong>ID:</strong> {{ mission.id }}</p>
+<p><strong>Ordonnateur ID:</strong> {{ mission.ordonnateur_id }}</p>
+<p><strong>Reference:</strong> {{ mission.reference }}</p>
+<p><strong>Date Mission:</strong> {{ mission.date_mission }}</p>
+<p><strong>Date Fin Mission:</strong> {{ mission.date_fin_mission }}</p>
+<p><strong>Objet Mission:</strong> {{ mission.objet_mission }}</p>
+{% endblock

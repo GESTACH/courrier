@@ -1,0 +1,37 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Liste des utilisateurs {% endblock title %}
+
+{% block content %}
+<h1>Liste des utilisateurs</h1>
+<a href="{% url 'user:utilisateur_create' %}">Créer un utilisateur</a>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Utilisateur</th>
+      <th>Email</th>
+      <th>Contact</th>
+      <th>Groupe</th>
+      <th>Actif</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for utilisateur in utilisateurs %}
+    <tr>
+      <td>{{ utilisateur.nom_prenoms }}</td>
+      <td>{{ utilisateur.user.email }}</td>
+      <td>{{ utilisateur.contact }}</td>
+      <td>{{ utilisateur.groupe }}</td>
+      <td>{{ utilisateur.user.is_active }}</td>
+      <td>
+        <a href="{% url 'user:utilisateur_update' utilisateur.pk %}">Modifier</a>
+        <a href="{% url 'group_perm:assign_permissions' user_id=utilisateur.user.pk %}">Permissions</a>
+        <a href="{% url 'user:utilisateur_delete' utilisateur.pk %}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer le l\'utilisateur {{ utilisateur.nom_prenoms }} ?')">Supprimer</a>
+     </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

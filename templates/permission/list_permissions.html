@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Liste des Permissions</h2>
+<a href="{% url 'permission:create_permission' %}">Créer une nouvelle permission</a>
+<ul>
+{% for permission in permissions %}
+    <li>
+        {{ permission.name }} 
+        <a href="{% url 'permission:edit_permission' permission.id %}">Modifier</a>
+        <a href="{% url 'permission:delete_permission' permission.id %}">Supprimer</a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

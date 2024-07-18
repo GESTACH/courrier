@@ -1,0 +1,75 @@
+{% extends 'layouts/base.html' %}
+
+
+{% block title %} {% endblock title %}
+
+{% block content %}
+    <!-- Affichage des messages -->
+    {% if messages %}
+        <div class="alert alert-warning" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+    {% endif %}
+
+
+        <!-- Titre de la page -->
+<div class="card rounded mt-1 mr-2" style="background-color: rgba(58,68,122,0.23)">
+    <div class="card-header">
+        <div class="col-sm">
+            <h4><b>GESTION DES MINISTERES</b></h4>
+        </div>
+    </div>
+</div>
+
+<div class="ml-3" >
+    <h4 style="color: #05521a">{% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %} un ministère</h4>
+</div>
+
+  <div class="card card">
+
+      <div class="card-body center">
+          <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+              <div class="form-group col-md-10 center">
+                  {{ form.ministere }}
+              </div>
+              {{ form.logo_min }}
+              <div class="form-group col-6">
+                 <img id="logo-preview" src="#" alt="Aperçu du logo" class="img-fluid">
+              </div>
+              <div class="float-left">
+
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-sm ml-auto mr-1">Enregistrer</button>
+              </div>
+          </form>
+      </div>
+
+  </div>
+
+{% endblock content %}
+
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      // Lorsque le champ de téléchargement de logo change
+      $('#id_logo_min').change(function() {
+        // Récupérer le fichier sélectionné
+        var file = $(this)[0].files[0];
+        // Créer un objet URL pour le fichier
+        var objectUrl = URL.createObjectURL(file);
+        // Mettre à jour l'attribut src de l'image avec l'URL de l'objet
+        $('#logo-preview').attr('src', objectUrl);
+      });
+    });
+    </script>
+{% endblock javascripts %}

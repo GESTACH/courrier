@@ -1,0 +1,49 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Invitation d'un utilisateur {% endblock title %}
+
+{% block content %}
+<div class="card card">
+            <a href="{% url 'user:utilisateur_list'%}" >
+                 <span class="material-symbols-outlined">
+                arrow_back
+                </span>
+            </a>
+      <div class="card-header">
+            <div class="form-group label-floating has-success row">
+            
+            <h4>{% if form_invit.instance.pk %}Modifier{% else %}Créer{% endif %} un utilisateur</h4>
+            </div>
+        </div>
+
+      <div class="card-body center">
+          <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+              <div class="form-group col-md-10 center">
+                  {{ form_invit.first_name }}
+              </div>
+            <div class="form-group col-md-10 center">
+                  {{ form_invit.last_name }}
+              </div>
+              <div class="form-group col-md-10 center">
+                  {{ form_invit.email }}
+              </div>
+              {% if form_invit.instance.pk %}
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-sm ml-auto mr-1">Enregistrer</button>
+              </div>
+              {% else %}
+                  <div class="form-group col-md-10 center">
+                  {{ form_invit.password }}
+                  </div>
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary btn-sm ml-auto mr-1">Inviter l'utilisateur</button>
+                  </div>
+              {% endif %}
+              
+
+              
+          </form>
+      </div>
+
+  </div>
+{% endblock content %}

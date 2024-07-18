@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html' %}
+{% block title %}  {% endblock title %}
+
+{% block content %}
+    <!-- Titre de la page -->
+<div class="card rounded mt-1 mr-2" style="background-color: rgba(58,68,122,0.23)">
+    <div class="card-header">
+        <div class="col-sm">
+            <h4><b>GESTION DES MINISTERES</b></h4>
+        </div>
+    </div>
+</div>
+    
+    <!-- Bouton d'ajout -->
+<div class="card-tools float-right">
+    <button type="button" class="btn btn-primary btn-sm ml-auto mr-1" onclick="window.location.href='{% url 'service:ministere_create' %}'">
+        <i class="fas fa-plus"></i> Ajouter Ministère
+    </button>
+</div>
+
+    
+<section class="content">
+  <div class="card card-outline card-danger">
+      <div class="card-body p-0 ml-2 mr-1">
+                <table class="table small-box-footer table-hover">
+                    <thead class="small" >
+                        <tr class="small">
+                            <th>Liste des Ministères</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ministere in ministere_list %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'service:ministere_update' ministere.pk %}" enctype="multipart/form-data" class="text-center">
+                                    {{ ministere.ministere }}
+                                </a>
+                            </td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="...">
+              <ul class="pagination">
+                <li class="page-item disabled">
+                  <a class="page-link" href="javascript:;" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="javascript:;">1</a></li>
+                <li class="page-item active">
+                  <a class="page-link" href="javascript:;">2 <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="page-item"><a class="page-link" href="javascript:;">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="javascript:;">Next</a>
+                </li>
+              </ul>
+            </nav>
+        </div>
+  </div>
+
+    
+</section>
+
+{% endblock content %}
+
+

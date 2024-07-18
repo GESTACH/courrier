@@ -1,0 +1,13 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Liste des services {% endblock title %}
+
+{% block content %}
+<h1>Liste des Services</h1>
+<a href="{% url 'service:service_create' %}">Ajouter</a>
+
+    <ul>
+        {% for service in service_list %}
+            <li><a href="{% url 'service:service_detail' service.pk %}">{{ service.nom_service  }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

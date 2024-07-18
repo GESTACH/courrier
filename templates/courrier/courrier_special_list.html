@@ -1,0 +1,66 @@
+<!-- Importez Bootstrap CSS et JavaScript si ce n'est pas déjà fait -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% extends 'base.html' %}
+
+    
+
+
+{% block content %}
+    
+     <div class="card">
+        <div class="card-header">
+            <div class="">
+                <h4>Gestion des courriers collectifs</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="float-right">
+            <button type="button" class="btn btn-primary btn-sm ml-auto mr-1" onclick="window.location.href='{% url 'service:courrier_special_create' %}'">
+                <i class=" fa-plus"></i> Nouveau
+            </button>
+    </div>
+
+<!-- COMMANDES DU TABLEAU -->
+<div class="card-tools">
+    <div class="form-group label-floating has-success row">
+        <!-- Bouton de recherche -->
+        <input type="text" value="" class="form-control col-10" placeholder="Rechercher un courrier" id="search-input" />
+    </div>
+</div>
+    
+<section class="content">
+    <div class="card card-outline card-danger">
+        <div class="card-body p-0 ml-2 mr-1">
+            <table class="table small-box-footer table-hover">
+                <thead>
+                    <tr>
+                        <th>Expéditeur</th>
+                        <th>Destinataire</th>
+                        <th>Sujet</th>
+                        <th>Date d'envoi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for courrier in courriers %}
+                    <tr>
+                        <td>{{ courrier.expediteur }}</td>
+                        <td>{{ courrier.destinataire }}</td>
+                        <td>{{ courrier.sujet }}</td>
+                        <td>{{ courrier.date_envoi }}</td>
+                        <td>
+                            <a href="{% url 'service:courrier_special_detail' courrier.id %}">Voir détails</a>
+                            <!-- Lien vers la vue de détail du courrier sortant -->
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+

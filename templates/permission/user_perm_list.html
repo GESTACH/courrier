@@ -1,0 +1,59 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Permissions de l'utilisateur {{ user.username }} {% endblock title %}
+
+{% block content %}
+<div class="card rounded ml-2 mt-1 mr-2" style="background-color: rgba(216,205,220,0.23)">
+    <div class="card-header">
+        <div class="col-sm">
+            <h4>Permissions de l'utilisateur {{ user.username }}</h4>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Permission</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody class="">
+            {% for perm in user_perms %}
+            <tr>
+                <td>{{ perm.name }}</td>
+                <td>
+                    <a href="" data-toggle="modal" data-target="#confirmDeleteModal{{ user.pk }} {{ perm.codename }}"> <span class=" material-symbols-outlined">delete</span> </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Aucune permission attribuée à cet utilisateur.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmDeleteModal{{ user.pk }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel{{ user.pk }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel{{ utilisateur.pk }}">Confirmation de suppression</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+               <a href="{% url 'user:user_perm_assign' utilisateur.pk 'perm_codename' %}"><span class="material-symbols-outlined">edit</span></a>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+{% endblock content %}

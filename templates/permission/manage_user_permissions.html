@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Gérer les permissions et groupes de {{ employer.user.username }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <h3>Groupes</h3>
+    {% for group in all_groups %}
+    <label>
+        <input type="checkbox" name="groups" value="{{ group.id }}"
+               {% if group in employer.employer_groups.all %}checked{% endif %}>
+        {{ group.name }}
+    </label><br>
+    {% endfor %}
+
+    <h3>Permissions</h3>
+    {% for permission in all_permissions %}
+    <label>
+        <input type="checkbox" name="permissions" value="{{ permission.id }}"
+               {% if permission in employer.employer_permissions.all %}checked{% endif %}>
+        {{ permission.name }}
+    </label><br>
+    {% endfor %}
+
+    <button type="submit">Enregistrer les modifications</button>
+</form>
+{% endblock %}

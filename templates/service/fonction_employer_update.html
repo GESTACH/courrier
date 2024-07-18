@@ -1,0 +1,15 @@
+
+{% extends 'base.html' %}
+{% block title %} Liste des Employer {% endblock title %}
+
+{% block content %}
+
+<h1>Modifier une fonction</h1>
+    <h1>Modifier une Fonction d'Employé</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enregistrer les Modifications</button>
+    </form>
+{% endblock content %}
+

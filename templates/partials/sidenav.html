@@ -1,0 +1,98 @@
+
+
+<div class="main-menu" >
+    <!-- Brand Logo -->
+    <div class="logo-box">
+        <!-- Brand Logo Light -->
+        <a  class="logo-light">
+            <img src="/static/assets/images/gestach.png" alt="logo" class="logo-lg" height="60">
+            <img src="/static/assets/images/gestach.png" alt="small logo" class="logo-sm" height="40">
+        </a>
+    </div>
+
+    <!--- Menu -->
+    <div class="data-simplebar" >
+
+        <ul class="app-menu">
+            <div>
+                <li class=" waves-effect waves-light" style="color: #8a8ea4">G E S T A C H</li>
+            </div>
+
+
+
+            <li class="menu-item">
+                <a href="{% url 'auth:dashboard' user.pk %}" class="menu-link waves-effect waves-light">
+                    <span class="menu-icon"><i class="bx bx-home-smile"></i></span>
+                    <span class="menu-text"> Tableau de bord </span>
+                    <span class="badge bg-primary rounded ms-auto">01</span>
+                </a>
+            </li>
+
+
+
+            <li class="menu-title">GESTION DES COURRIERS</li>
+
+            <li class="menu-item">
+                <a href="#menuComponentsui" data-bs-toggle="collapse" class="menu-link waves-effect waves-light">
+                    <span class="menu-icon"><i class="bx bx-cookie"></i></span>
+                    <span class="menu-text"> Courriers </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <div class="collapse" id="menuComponentsui">
+                    <ul class="sub-menu">
+                        <li class="menu-item">
+                            <a href="{% url 'service:courrier_sortant_list' %}" class="menu-link">
+                                <span class="menu-text">Courriers individuels</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{% url 'service:courrier_special_list' %}" class="menu-link">
+                                <span class="menu-text">Courriers collectifs</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+
+            <li class="menu-title">ADMINISTRATION</li>
+
+             <li class="menu-item">
+                 <a href="{% url 'service:direction_list' %}" class="menu-link">
+                    <span class="menu-text">Directions</span>
+                 </a>
+            </li>
+            <li class="menu-item">
+                 <a href="{% url 'service:service_list' %}" class="menu-link">
+                    <span class="menu-text">Services</span>
+                 </a>
+            </li>
+            <li class="menu-item">
+                 <a href="{% url 'user:employer_list' %}" class="menu-link">
+                    <span class="menu-text">Personnel</span>
+                 </a>
+            </li>
+
+            <li class="menu-item">
+                 <a href="{% url 'courrier:list_mission' %}" class="menu-link">
+                    <span class="menu-text">Ordre de mission</span>
+                 </a>
+            </li>
+            
+            <li class="menu-title">PARAMETRES</li>
+            
+            <li class="menu-item">
+                 <a href="{% url 'user:utilisateur_list' %}" class="menu-link">
+                    <span class="menu-text">Gestion des utilisateurs</span>
+                 </a>
+            </li>
+            
+            <li class="menu-item">
+                 <a href="{% url 'permission:list_permissions' %}" class="menu-link">
+                    <span class="menu-text">Permissions</span>
+                 </a>
+            </li>
+
+        </ul>
+    </div>
+</div>

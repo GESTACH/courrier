@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="">
+                <h4>Gestion des ordres de mission</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="float-right">
+        <button type="button" class="btn btn-primary btn-sm ml-auto mr-1" data-bs-toggle="modal" data-bs-target="#missionModal">
+            <i class="fa-plus"></i> Nouveau
+        </button>
+    </div>
+
+    <div class="card-tools">
+        <div class="form-group label-floating has-success row">
+            <input type="text" value="" class="form-control col-10" placeholder="Rechercher une mission" id="search-input" />
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="card card-outline card-danger">
+            <div class="card-body p-0 ml-2 mr-1">
+                <table class="table small-box-footer table-hover">
+                    <thead>
+                        <tr>
+                            <th>Reférence</th>
+                            <th>Ordonnateur</th>
+                            <th>Date de début</th>
+                            <th>Date de fin</th>
+                            <th>Instruction</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>    
+                    {% for mission in missions %}
+                        <tr>
+                            <td>{{ mission.reference }}</td>
+                            <td>{{ mission.ordonnateur }}</td>
+                            <td>{{ mission.date_mission }}</td>
+                            <td>{{ mission.date_fin_mission }}</td>
+                            <td>{{ mission.objet_mission }}</td>
+                            <td>
+                                <a href="{% url 'courrier:read_mission' mission.pk %}">Ordre de mission</a>
+                            </td>
+                        </tr> 
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal pour la création/modification de mission -->
+    <div class="modal fade" id="missionModal" tabindex="-1" aria-labelledby="missionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="missionModalLabel">Nouvel ordre de mission</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-mission-form" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                         
+                            {{ mission_form.ordonnateur }}
+                        </div>
+                        
+                        <div class="mb-3">
+                           
+                            {{ mission_form.reference }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            
+                            {{ mission_form.date_mission }}
+                        </div>
+                        
+                        <div class="mb-3">
+                        
+                            {{ mission_form.date_fin_mission }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            
+                            <div id="editor-container">{{ mission_form.objet_mission }}</div>
+                            <input type="hidden" name="objet_mission" id="hidden-objet-mission">
+                        </div>
+                        
+                        <div class="mb-3">
+                            
+                            {{ mission_form.transport }}
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <label class="form-check-label" for="{{ mission_form.hebergement.id_for_label }}">Hébergement</label>
+                            {{ mission_form.hebergement }}
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <label class="form-check-label" for="{{ mission_form.repas_fourni.id_for_label }}">Repas fourni</label>
+                            {{ mission_form.repas_fourni }}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3 mb-lg-0">
+                                    <label class="form-label">Sélectionner les missionnaires :</label>
+                                    {% for missionnaire in missionnaires %}
+                                    <div class="missionnaire-selection">
+                                        <input type="checkbox" name="missionnaire_ids" value="{{ missionnaire.id }}">
+                                        <label>{{ missionnaire.nom }} {{ missionnaire.prenom }}</label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" form="create-mission-form" class="btn btn-primary">Créer Mission</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quill JS Plugin -->
+    <script src="/static/assets/js/pages/form-quilljs.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'script': 'sub'}, { 'script': 'super' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'direction': 'rtl' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'font': [] }],
+                        [{ 'align': [] }],
+                        ['clean']
+                    ]
+                }
+            });
+
+            var form = document.getElementById('create-mission-form');
+            form.onsubmit = function() {
+                var hiddenInput = document.getElementById('hidden-objet-mission');
+                hiddenInput.value = quill.root.innerHTML;
+            };
+        });
+    </script>
+{% endblock %}

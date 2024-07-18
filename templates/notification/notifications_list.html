@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Mes Notifications</h1>
+
+  {% if notifications %}
+    <ul>
+    {% for notification in notifications %}
+      <li>
+        <a href="{% url 'courrier:notification_detail' notification.pk %}">
+          {{ notification.notification.type }} - {{ notification.notification.contenu|truncatechars :50 }}
+        </a>
+        {% if not notification.notification.lue %}
+          <span class="badge badge-primary">Nouveau</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>Vous n'avez aucune notification pour le moment.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="">
+            <h4>Nouveau courrier spécial</h4>
+        </div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+        {{ form.expediteur.errors }}
+        <label for="{{ form.expediteur.id_for_label }}">Expéditeur:</label>
+        {{ form.expediteur }}
+    </div>
+
+    <div>
+        {{ form.destinataire.errors }}
+        <label for="{{ form.destinataire.id_for_label }}">Destinataire:</label>
+        {{ form.destinataire }}
+    </div>
+
+    <div>
+        {{ form.date_reception.errors }}
+        <label for="{{ form.date_reception.id_for_label }}">Date de réception:</label>
+        {{ form.date_reception }}
+    </div>
+
+    <div>
+        {{ form.objet.errors }}
+        <label for="{{ form.objet.id_for_label }}">Objet:</label>
+        {{ form.objet }}
+    </div>
+
+    <div>
+        {{ form.note_1.errors }}
+        <label for="{{ form.note_1.id_for_label }}">Note 1:</label>
+        {{ form.note_1 }}
+    </div>
+
+    <div>
+        {{ form.note_2.errors }}
+        <label for="{{ form.note_2.id_for_label }}">Note 2:</label>
+        {{ form.note_2 }}
+    </div>
+
+    <div>
+        <label>Instructions et Directions pour copie:</label>
+        <div style="overflow-x: auto;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Instruction</th>
+                        <th>Directions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instruction in instructions %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="instructions" value="{{ instruction.id }}" id="instruction_{{ instruction.id }}" onclick="toggleDirections({{ instruction.id }})">
+                                <label for="instruction_{{ instruction.id }}">{{ instruction.nom_instruction }}</label>
+                            </td>
+                            <td>
+                                <div id="directions_for_{{ instruction.id }}" class="directions-container" style="display:none;">
+                                    {% for direction in directions %}
+                                        <div>
+                                            <input type="checkbox" name="directions_{{ instruction.id }}" value="{{ direction.id }}" class="direction-checkbox">
+                                            <label>{{ direction.sigle }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div>
+        <label for="id_joint">Fichiers joints:</label>
+        <div id="file-upload-container">
+            <input type="file" name="joint" id="id_joint" class="file-input" multiple>
+        </div>
+    </div>
+
+    <button type="submit">Enregistrer</button>
+</form>
+
+<script>
+function toggleDirections(instructionId) {
+    var container = document.getElementById('directions_for_' + instructionId);
+    var instructionCheckbox = document.getElementById('instruction_' + instructionId);
+    if (instructionCheckbox.checked) {
+        container.style.display = 'block';
+    } else {
+        container.style.display = 'none';
+    }
+}
+
+document.querySelectorAll('input[type="checkbox"][name="instructions"]').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        toggleDirections(checkbox.value);
+    });
+});
+</script>
+{% endblock %}

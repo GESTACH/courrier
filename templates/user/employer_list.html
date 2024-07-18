@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Affichage des messages -->
+{% if messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endif %}
+
+<!-- TITRE DE LA PAGE -->
+<div class="card rounded mt-1 mr-2" style="background-color: rgba(58,68,122,0.23)">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-sm">
+                <h4><b>GESTION DES EMPLOYÉS</b></h4>
+            </div>
+            <div class="col-sm text-end">
+                <a href="{% url 'user:employer_create' %}" class="btn btn-primary">
+                    <i class="mdi mdi-plus-thick"></i> Ajouter
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- COMMANDES DU TABLEAU -->
+<div class="row mt-3">
+    <div class="col-xl-11">
+        <form method="get" action="{% url 'user:employer_list' %}" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ search_query }}" class="form-control border border-primary" placeholder="Rechercher un employé" id="search-input">
+                <button type="submit" class="btn btn-dark waves-effect waves-light"><i class="mdi mdi-search-web"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- LISTE DES EMPLOYÉS -->
+<div class="card mt-3 border-primary">
+    <div class="card-header bg-soft-dark">
+        <h3>Liste des Employés</h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nom et Prénoms</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Service</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employer in employers %}
+                <tr>
+                    <td>{{ employer.user.get_full_name }}</td>
+                    <td>{{ employer.user.email }}</td>
+                    <td>{{ employer.contact }}</td>
+                    <td>{{ employer.service.nom_service }}</td>
+                    <td class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-soft-primary dropdown-toggle" type="button" id="dropdownMenuButton{{ employer.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="mdi mdi-chevron-down"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ employer.pk }}">
+                                <li><a class="dropdown-item" href="{% url 'user:employer_update' employer.pk %}"><i class="mdi mdi-update me-2"></i>Modifier</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ employer.pk }}"><i class="mdi mdi-delete me-2"></i>Supprimer</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Modal de confirmation de suppression -->
+                <div class="modal fade" id="confirmDeleteModal{{ employer.pk }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ employer.pk }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmDeleteModalLabel{{ employer.pk }}">Confirmer la suppression</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Êtes-vous sûr de vouloir supprimer l'employé "{{ employer.user.get_full_name }}" ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <form method="post" action="{% url 'user:employer_delete' employer.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucun employé trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if employers.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if employers.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">Première</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ employers.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Précédente</a></li>
+            {% endif %}
+            {% for num in employers.paginator.page_range %}
+                {% if employers.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > employers.number|add:'-3' and num < employers.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if employers.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ employers.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Suivante</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ employers.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">Dernière</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+{% endblock %}

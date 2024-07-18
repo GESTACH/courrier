@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %} Liste des utilisateurs {% endblock title %}
+
+{% block content %}
+<h1>Détails du Service "{{ service.service }}"</h1>
+    <p><strong>Nom :</strong> {{ service.nom_service }}</p>
+    <!-- Afficher d'autres détails du ministère si nécessaire -->
+    <a href="{% url 'service:service_list' %}">Retour à la liste des services</a>
+
+
+{% endblock content %}

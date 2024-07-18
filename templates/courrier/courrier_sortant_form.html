@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="">
+            <h4>Nouveau courrier spécial</h4>
+        </div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+        {{ form.expediteur.errors }}
+        <label for="{{ form.expediteur.id_for_label }}">Expéditeur:</label>
+        {{ form.expediteur }}
+    </div>
+
+    <div>
+        {{ form.destinataire.errors }}
+        <label for="{{ form.destinataire.id_for_label }}">Destinataire:</label>
+        {{ form.destinataire }}
+    </div>
+
+    <div>
+        {{ form.date_reception.errors }}
+        <label for="{{ form.date_reception.id_for_label }}">Date de réception:</label>
+        {{ form.date_reception }}
+    </div>
+
+    <div>
+        {{ form.objet.errors }}
+        <label for="{{ form.objet.id_for_label }}">Objet:</label>
+        {{ form.objet }}
+    </div>
+
+    <div>
+        {{ form.note_1.errors }}
+        <label for="{{ form.note_1.id_for_label }}">Note 1:</label>
+        {{ form.note_1 }}
+    </div>
+
+    <div>
+        {{ form.note_2.errors }}
+        <label for="{{ form.note_2.id_for_label }}">Note 2:</label>
+        {{ form.note_2 }}
+    </div>
+
+    <div>
+        <label>Instructions:</label>
+        <div class="row">
+            <div class="col">
+                <ul>
+                    {% for instruction in instructions %}
+                        <li>
+                            <input type="checkbox" name="instructions" value="{{ instruction.id }}">
+                            {{ instruction.nom_instruction }}
+                            <div class="directions">
+                                <label>Directions pour copie:</label>
+                                <ul>
+                                    {% for direction in directions %}
+                                    <li>
+                                        <input type="checkbox" name="directions_{{ instruction.id }}" value="{{ direction.id }}">
+                                        {{ direction.sigle }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <label for="id_joint">Fichiers joints:</label>
+        <div id="file-upload-container">
+            <input type="file" name="joint" id="id_joint" class="file-input">
+        </div>
+        <button type="button" id="add-file-button">
+            <img src="{% static 'path/to/paperclip-icon.png' %}" alt="Ajouter un fichier">
+        </button>
+    </div>
+
+    <button type="submit">Enregistrer</button>
+</form>
+
+<script>
+document.getElementById('add-file-button').addEventListener('click', function() {
+    var fileUploadContainer = document.getElementById('file-upload-container');
+    var newFileInput = document.createElement('input');
+    newFileInput.type = 'file';
+    newFileInput.name = 'joint';
+    newFileInput.className = 'file-input';
+    fileUploadContainer.appendChild(newFileInput);
+});
+</script>
+{% endblock %}
